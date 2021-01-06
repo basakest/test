@@ -24,6 +24,5 @@
     </logging>
     <php>
         <env name="DB_DATABASE" value="casbin"/>
-        <ini name="xdebug.mode" value="coverage"/>
     </php>
 </phpunit>
