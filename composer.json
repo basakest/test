@@ -1,0 +1,30 @@
+{
+    "name": "casbin/database-adapter",
+    "keywords": ["casbin", "database", "casbin-adapter"],
+    "description": "Database adapter for php-casbin. ",
+    "authors": [
+        {
+            "name": "TechLee",
+            "email": "techlee@qq.com"
+        }
+    ],
+    "license": "Apache-2.0",
+    "require": {
+        "casbin/casbin": "^2.0",
+        "techone/database": "^0.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~7.0",
+        "php-coveralls/php-coveralls": "^2.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "CasbinAdapter\\Database\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    }
+}
