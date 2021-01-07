@@ -6,6 +6,7 @@ use Casbin\Enforcer;
 use CasbinAdapter\Database\Adapter as DatabaseAdapter;
 use PHPUnit\Framework\TestCase;
 use TechOne\Database\Manager;
+use Casbin\Persist\Adapters\Filter;
 
 class AdapterTest extends TestCase
 {
@@ -52,6 +53,14 @@ class AdapterTest extends TestCase
         $this->assertTrue($e->enforce('bob', 'data2', 'write'));
         $this->assertTrue($e->enforce('alice', 'data2', 'read'));
         $this->assertTrue($e->enforce('alice', 'data2', 'write'));
+    }
+
+    public function testLoadFilteredPolicy()
+    {
+        $e = $this->getEnforcer();
+        $this->assertTrue($e->loadFilteredPolicy($filter = new Filter(['alice'])));
+        $this->assertTrue($e->loadFilteredPolicy($filter = new Filter(['bob'])));
+        $this->assertFalse($e->loadFilteredPolicy($filter = new Filter(['sjihh233.'])));
     }
 
     public function testAddPolicy()
