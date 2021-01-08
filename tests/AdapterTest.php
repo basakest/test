@@ -58,13 +58,8 @@ class AdapterTest extends TestCase
     public function testLoadFilteredPolicy()
     {
         $e = $this->getEnforcer();
-
+        $this->assertTrue($e->enforceWithMatcher('alice', 'alice', 'data1', 'read'));
         $e->loadFilteredPolicy($filter = new Filter(['alice']));
-        $model = $e->getModel();
-        $this->assertTrue(!empty($model['p']['p']->policy));
-        $model->clearPolicy();
-
-        $e->loadFilteredPolicy($filter = new Filter(['bob']));
         $model = $e->getModel();
         $this->assertTrue(!empty($model['p']['p']->policy));
         $model->clearPolicy();
@@ -72,7 +67,6 @@ class AdapterTest extends TestCase
         $e->loadFilteredPolicy($filter = new Filter(['xxxxx12v']));
         $model = $e->getModel();
         $this->assertFalse(!empty($model['p']['p']->policy));
-        
     }
 
     public function testAddPolicy()
