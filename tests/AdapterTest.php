@@ -94,7 +94,7 @@ EOT
         $filter = "v0 = 'bob'";
         $e->loadFilteredPolicy($filter);
         $this->assertEquals([
-            ['bob', 'data2', 'write']
+            ['bob', 'data2', 'write', '', '', '']
         ], $e->getPolicy());
 
         // Filter
