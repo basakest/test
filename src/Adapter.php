@@ -28,6 +28,8 @@ class Adapter implements AdapterContract, FilteredAdapter
 
     public $casbinRuleTableName = 'casbin_rule';
 
+    public $rows = [];
+
     public function __construct(array $config)
     {
         $this->config = $config;
@@ -226,12 +228,12 @@ class Adapter implements AdapterContract, FilteredAdapter
             $sql .= $filter;
             $rows = $this->connection->query($sql);
         } else if ($filter instanceof Closure) {
-            $connection = $this->connection;
-            $filter($connection, $sql, $rows = []);
+            //$connection = $this->connection;
+            $filter($this->connection, $sql, $this->rows);
         } else {
             throw new InvalidFilterTypeException('invalid filter type');
         }
-
+        $rows = $rows ?? $this->rows;
         foreach($rows as $row) {
             $line = implode(', ', $row);
             $this->loadPolicyLine($line, $model);
