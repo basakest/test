@@ -99,7 +99,7 @@ EOT
         ], $e->getPolicy());
 
         // Filter
-        $filter = new Filter(['read']);
+        $filter = new Filter(['', '', 'read']);
         $e->loadFilteredPolicy($filter);
         $this->assertEquals([
             ['alice', 'data1', 'read', '', '', ''],
