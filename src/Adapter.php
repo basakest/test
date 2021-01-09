@@ -227,7 +227,7 @@ class Adapter implements AdapterContract, FilteredAdapter
             $rows = $this->connection->query($sql);
         } else if ($filter instanceof Closure) {
             $connection = $this->connection;
-            $filter($connection, $sql);
+            $filter($connection, $sql, $rows = []);
         } else {
             throw new InvalidFilterTypeException('invalid filter type');
         }

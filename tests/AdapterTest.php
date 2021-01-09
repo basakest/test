@@ -107,7 +107,7 @@ EOT
         ], $e->getPolicy());
 
         // Closure
-        $e->loadFilteredPolicy(function ($connection, $sql) {
+        $e->loadFilteredPolicy(function ($connection, $sql, &$rows) {
             $rows = $connection->query($sql . "v0 = 'alice'");
         });
 
