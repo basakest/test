@@ -51,8 +51,24 @@ class AdapterTest extends TestCase
     {
         $this->adapter = $adapter;
         $this->initDb($this->adapter);
-        $model = Model::newModelFromFile('./rbac_model.conf');
+        $model = Model::newModelFromString(
+            <<<'EOT'
+[request_definition]
+r = sub, obj, act
 
+[policy_definition]
+p = sub, obj, act
+
+[role_definition]
+g = _, _
+
+[policy_effect]
+e = some(where (p.eft == allow))
+
+[matchers]
+m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
+EOT
+        );
         return new Enforcer($model, $this->adapter);
     }
 
