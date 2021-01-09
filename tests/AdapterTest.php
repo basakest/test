@@ -3,6 +3,8 @@
 namespace Tests;
 
 use Casbin\Enforcer;
+use Casbin\Model\Model;
+use Casbin\Persist\Adapter;
 use CasbinAdapter\Database\Adapter as DatabaseAdapter;
 use PHPUnit\Framework\TestCase;
 use TechOne\Database\Manager;
@@ -45,6 +47,15 @@ class AdapterTest extends TestCase
         return new Enforcer(__DIR__.'/rbac_model.conf', $adapter);
     }
 
+    protected function getEnforcerWithAdapter(Adapter $adapter): Enforcer
+    {
+        $this->adapter = $adapter;
+        $this->initDb($this->adapter);
+        $model = Model::newModelFromFile('./rbac_model.conf');
+
+        return new Enforcer($model, $this->adapter);
+    }
+
     public function testLoadPolicy()
     {
         $e = $this->getEnforcer();
@@ -57,16 +68,35 @@ class AdapterTest extends TestCase
 
     public function testLoadFilteredPolicy()
     {
-        $e = $this->getEnforcer();
-        $this->assertTrue($e->enforceWithMatcher('alice', 'alice', 'data1', 'read'));
-        $e->loadFilteredPolicy($filter = new Filter(['alice']));
-        $model = $e->getModel();
-        $this->assertTrue(!empty($model['p']['p']->policy));
-        $model->clearPolicy();
+        $this->initConfig();
+        $adapter = DatabaseAdapter::newAdapter($this->config);
+        $adapter->setFiltered(true);
+        $e = $this->getEnforcerWithAdapter($adapter);
+        $this->assertEquals([], $e->getPolicy());
 
-        $e->loadFilteredPolicy($filter = new Filter(['xxxxx12v']));
-        $model = $e->getModel();
-        $this->assertFalse(!empty($model['p']['p']->policy));
+        // string
+        $filter = "v0 = 'bob'";
+        $e->loadFilteredPolicy($filter);
+        $this->assertEquals([
+            ['bob', 'data2', 'write']
+        ], $e->getPolicy());
+
+        // Filter
+        $filter = new Filter(['read']);
+        $e->loadFilteredPolicy($filter);
+        $this->assertEquals([
+            ['alice', 'data1', 'read'],
+            ['data2_admin', 'data2', 'read'],
+        ], $e->getPolicy());
+
+        // Closure
+        $e->loadFilteredPolicy(function ($connection, $sql) {
+            $rows = $connection->query($sql . "v0 = 'alice'");
+        });
+
+        $this->assertEquals([
+            ['alice', 'data1', 'read'],
+        ], $e->getPolicy());
     }
 
     public function testAddPolicy()
