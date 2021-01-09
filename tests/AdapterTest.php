@@ -94,6 +94,7 @@ EOT
         $filter = "v0 = 'bob'";
         $e->loadFilteredPolicy($filter);
         $this->assertEquals([
+            //
             ['bob', 'data2', 'write', '', '', '']
         ], $e->getPolicy());
 
@@ -101,8 +102,8 @@ EOT
         $filter = new Filter(['read']);
         $e->loadFilteredPolicy($filter);
         $this->assertEquals([
-            ['alice', 'data1', 'read'],
-            ['data2_admin', 'data2', 'read'],
+            ['alice', 'data1', 'read', '', '', ''],
+            ['data2_admin', 'data2', 'read', '', '', ''],
         ], $e->getPolicy());
 
         // Closure
@@ -111,7 +112,7 @@ EOT
         });
 
         $this->assertEquals([
-            ['alice', 'data1', 'read'],
+            ['alice', 'data1', 'read', '', '', ''],
         ], $e->getPolicy());
     }
 
